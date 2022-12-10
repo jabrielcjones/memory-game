@@ -105,66 +105,56 @@ function persistScore() {
 
 // TODO: Implement this function!
 function handleCardClick(e) {
-  // you can use e.target to see which element was clicked
-  if (!e.target.className) {
-    console.log('card not selected')
+  // card not selected
+  if (!e.target.className) { return }
+
+  // card already flipped
+  if (e.target.style.backgroundColor) { return }
+
+  // too many cards selected
+  if (Object.keys(cardChoices).length >= 2) { return }
+
+  // card selected
+  cardChoices[e.target.id] = e.target
+
+  // flip card
+  e.target.style.backgroundColor = e.target.className
+
+  // only one card selected
+  if (Object.keys(cardChoices).length < 2) { return }
+
+  // match attemped
+  incrementScore()
+
+  // not a match
+  if (!evaulateChoices()) {
+    setTimeout(resetAttempt, 1000)
     return
   }
 
-  if (e.target.style.backgroundColor) {
-    console.log('card already flipped')
+  matches.add(Object.values(cardChoices)[0].className)
+
+  // all matches not found
+  if (matches.size < gameContainer.childElementCount/2) {
+    resetAttempt()
     return
   }
 
-  if (Object.keys(cardChoices).length >= 2) {
-    console.log('too many cards selected')
+  let storedScore = localStorage.getItem('score')
+  let scoreInt = parseInt(score.innerText)
+
+  // new best score
+  if (!storedScore || scoreInt < storedScore) {
+    localStorage.setItem('score', scoreInt)
+    setTimeout(function() {
+      alert(`BEST SCORE!!! ${scoreInt}`)
+    }, 500)
     return
   }
 
-  if (Object.keys(cardChoices).length < 2) {
-    cardChoices[e.target.id] = e.target
-
-    if (!e.target.style.backgroundColor) {
-      e.target.style.backgroundColor = e.target.className
-    }
-  }
-
-  if (Object.keys(cardChoices).length === 2) {
-    incrementScore()
-
-    if (!evaulateChoices()) {
-      console.log('not a match')
-      setTimeout(resetAttempt, 1000)
-      return
-    }
-
-    matches.add(Object.values(cardChoices)[0].className)
-
-    if (matches.size < gameContainer.childElementCount/2) {
-      console.log('all matches not found')
-      resetAttempt()
-      return
-    }
-
-    if (matches.size === gameContainer.childElementCount/2) {
-      console.log('all mataches found')
-
-      let storedScore = localStorage.getItem('score')
-      let scoreInt = parseInt(score.innerText)
-
-      if (!storedScore || scoreInt < storedScore) {
-        localStorage.setItem('score', scoreInt)
-        setTimeout(function() {
-          alert(`BEST SCORE!!! ${scoreInt}`)
-        }, 500)
-        return
-      }
-
-      setTimeout(function() {
-        alert('COMPLETE!!!')
-      }, 500)
-    }
-  }
+  setTimeout(function() {
+    alert('COMPLETE!!!')
+  }, 500)
 }
 
 // when the DOM loads
