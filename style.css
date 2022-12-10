@@ -1,3 +1,27 @@
+h1 {
+  text-align: center;
+  margin-bottom: 1px;
+}
+
+#version {
+  text-align: center;
+  margin-top: 1px;
+}
+
+#controls {
+  text-align: center;
+}
+
+#score {
+  text-align: center;
+  font-size: xx-large;
+}
+
+button {
+  border-radius: 8px;
+  font-size: large;
+}
+
 #game div {
   border: 1px solid black;
   width: 15%;

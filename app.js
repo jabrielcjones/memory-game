@@ -3,12 +3,12 @@ const startButton = document.getElementById("startButton")
 const resetButton = document.getElementById("resetButton")
 const controlsDiv = document.getElementById("controls")
 // const pairCountInput = document.getElementById("pairCountInput")
-const score = document.createElement("b")
+const score = document.getElementById("score")
 
 gameContainer.addEventListener("click", handleCardClick)
 resetButton.disabled = 'true'
-score.id = 'score'
-controlsDiv.appendChild(score)
+// score.id = 'score'
+// controlsDiv.appendChild(score)
 
 // const COLORS = [
 //   "red",
