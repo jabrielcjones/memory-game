@@ -5,6 +5,7 @@ const controlsDiv = document.getElementById("controls")
 // const pairCountInput = document.getElementById("pairCountInput")
 const score = document.createElement("b")
 
+gameContainer.addEventListener("click", handleCardClick)
 resetButton.disabled = 'true'
 score.id = 'score'
 controlsDiv.appendChild(score)
@@ -112,7 +113,7 @@ function createColorDiv(color, index) {
   newDiv.id = index
 
   // call a function handleCardClick when a div is clicked on
-  newDiv.addEventListener("click", handleCardClick);
+  // newDiv.addEventListener("click", handleCardClick);
 
   // append the div to the element with an id of game
   gameContainer.append(newDiv);
@@ -163,54 +164,62 @@ function persistScore() {
 function handleCardClick(e) {
   // you can use e.target to see which element was clicked
 
+  if (!e.target.className) {
+    console.log("card not selected")
+    return
+  }
+
+  if (e.target.style.backgroundColor) {
+    console.log('card already flipped')
+    return
+  }
+
+  if (Object.keys(cardChoices).length >= 2) {
+    console.log('too many cards selected')
+    return
+  }
+
   if (Object.keys(cardChoices).length < 2) {
     cardChoices[e.target.id] = e.target
 
     if (!e.target.style.backgroundColor) {
-      // console.log(e.target.className)
       e.target.style.backgroundColor = e.target.className
     }
-    // else {
-    //   e.target.style.backgroundColor = null
-    //   delete cardChoices[e.target.id]
-    // }
   }
-  else { return }
 
   if (Object.keys(cardChoices).length === 2) {
     incrementScore()
 
-    if (evaulateChoices()) {
-      matches.add(Object.values(cardChoices)[0].className)
+    if (!evaulateChoices()) {
+      console.log('not a match')
+      setTimeout(resetAttempt, 1000)
+      return
+    }
 
-      if (matches.size === gameContainer.childElementCount/2) {
-        let storedScore = localStorage.getItem("score")
-        let scoreInt = parseInt(score.innerText)
+    matches.add(Object.values(cardChoices)[0].className)
 
-        if (!storedScore) {
-          localStorage.setItem("score", scoreInt)
-          setTimeout(function() {
-            alert(`BEST SCORE!!! ${scoreInt}`)
-          }, 500)
-          return
-        }
-        else if (scoreInt < storedScore) {
-          localStorage.setItem("score", scoreInt)
-          setTimeout(function() {
-            alert(`BEST SCORE!!! ${scoreInt}`)
-          }, 500)
-          return
-        }
 
+    if (matches.size < gameContainer.childElementCount/2) {
+      console.log('all matches not found')
+      resetAttempt()
+      return
+    }
+
+    if (matches.size === gameContainer.childElementCount/2) {
+      let storedScore = localStorage.getItem("score")
+      let scoreInt = parseInt(score.innerText)
+
+      if (!storedScore || scoreInt < storedScore) {
+        localStorage.setItem("score", scoreInt)
         setTimeout(function() {
-          alert('COMPLETE!!!')
+          alert(`BEST SCORE!!! ${scoreInt}`)
         }, 500)
         return
       }
-      resetAttempt()
-    }
-    else {
-      setTimeout(resetAttempt, 1000)
+
+      setTimeout(function() {
+        alert('COMPLETE!!!')
+      }, 500)
     }
   }
 }
